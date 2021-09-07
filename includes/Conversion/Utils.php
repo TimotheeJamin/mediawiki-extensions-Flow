@@ -299,7 +299,7 @@ abstract class Utils {
 	private static function makeVRSObject() {
 		global $wgVirtualRestConfig, $wgFlowParsoidURL, $wgFlowParsoidPrefix,
 			$wgFlowParsoidTimeout, $wgFlowParsoidForwardCookies,
-			$wgFlowParsoidHTTPProxy;
+			$wgFlowParsoidHTTPProxy, $wgVisualEditorParsoidAutoConfig;
 
 		// the params array to create the service object with
 		$params = [];
@@ -319,6 +319,12 @@ abstract class Utils {
 			// there's a global parsoid config, use it next
 			$params = $vrs['modules']['parsoid'];
 			$params['restbaseCompat'] = true;
+        } elseif ( $wgVisualEditorParsoidAutoConfig ) {
+			$params = $vrs['modules']['parsoid'] ?? [];
+			$params['restbaseCompat'] = true;
+			// forward cookies on private wikis
+			$params['forwardCookies'] = !MediaWikiServices::getInstance()
+					->getPermissionManager()->isEveryoneAllowed( 'read' );
 		} else {
 			// no global modules defined, fall back to old defaults
 			if ( !$wgFlowParsoidURL ) {
