@@ -43,27 +43,32 @@
 
 	mw.flow.ve.Target.static.modes = [ 'visual', 'source' ];
 
-	mw.flow.ve.Target.static.toolbarGroups = [
-		{
-			name: 'style',
-			type: 'list',
-			icon: 'textStyle',
-			title: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
-			include: [ { group: 'textStyle' }, 'language', 'clear' ],
-			forceExpand: [ 'bold', 'italic' ],
-			demote: [ 'strikethrough', 'code', 'underline', 'language', 'big', 'small', 'clear' ]
-		},
+	// mw.flow.ve.Target.static.toolbarGroups = [
+	// 	{
+	// 		name: 'style',
+	// 		type: 'list',
+	// 		icon: 'textStyle',
+	// 		title: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
+	// 		include: [ { group: 'textStyle' }, 'language', 'clear' ],
+	// 		forceExpand: [ 'bold', 'italic' ],
+	// 		demote: [ 'strikethrough', 'code', 'underline', 'language', 'big', 'small', 'clear' ]
+	// 	},
 
-		{
-			name: 'link',
-			include: [ 'link' ]
-		},
+	// 	{
+	// 		name: 'link',
+	// 		include: [ 'link' ]
+	// 	},
 
-		{
-			name: 'flowMention',
-			include: [ 'flowMention' ]
-		}
-	];
+	// 	{
+	// 		name: 'flowMention',
+	// 		include: [ 'flowMention' ]
+	// 	}
+	// ];
+
+	// [Display all VisualEditor Tools + User mention. Notice that if the editor is not 
+	// large enough, tools overflow. --TJ]
+	mw.flow.ve.Target.static.toolbarGroups = ve.init.mw.Target.static.toolbarGroups;                    
+        mw.flow.ve.Target.static.toolbarGroups.unshift({name: 'flowMention', include: ['flowMention']});
 
 	// Allow pasting links
 	mw.flow.ve.Target.static.importRules = ve.copy( mw.flow.ve.Target.static.importRules );
