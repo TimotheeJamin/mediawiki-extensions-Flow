@@ -77,18 +77,79 @@
 	// 	}
 	// ];
 
-	// [Display all VisualEditor Tools + User mention. Notice that if the editor is not
-	// large enough, tools overflow. --TJ]
-	mw.flow.ve.Target.static.toolbarGroups = ve.init.mw.Target.static.toolbarGroups;
-	mw.flow.ve.Target.static.toolbarGroups.unshift({name: 'flowMention', include: ['flowMention']});
-	mw.flow.ve.Target.static.toolbarGroups.push({
+	if ( OO.ui.isMobile() ) {
+		// [If mobile, use same tools as for article
+		// Copied from extensions\VisualEditor\lib\ve\src\init\sa\ve.init.sa.MobileTarget.js --TJ]
+		mw.flow.ve.Target.static.toolbarGroups = [
+			{
+				name: 'history',
+				include: [ 'undo' ]
+			},
+			{
+				name: 'style',
+				header: OO.ui.deferMsg( 'visualeditor-toolbar-text-style' ),
+				title: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
+				label: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
+				invisibleLabel: true,
+				type: 'list',
+				icon: 'textStyle',
+				include: [ { group: 'textStyle' }, 'language', 'clear' ],
+				forceExpand: [ 'bold', 'italic', 'clear' ],
+				promote: [ 'bold', 'italic' ],
+				demote: [ 'strikethrough', 'code', 'underline', 'language', 'clear' ]
+			},
+			{
+				name: 'link',
+				include: [ 'link' ]
+			},
+			{
+				name: 'structure',
+				header: OO.ui.deferMsg( 'visualeditor-toolbar-structure' ),
+				title: OO.ui.deferMsg( 'visualeditor-toolbar-structure' ),
+				label: OO.ui.deferMsg( 'visualeditor-toolbar-structure' ),
+				invisibleLabel: true,
+				type: 'list',
+				icon: 'listBullet',
+				include: [ { group: 'structure' } ],
+				demote: [ 'outdent', 'indent' ]
+			},
+			{
+				name: 'insert',
+				header: OO.ui.deferMsg( 'visualeditor-toolbar-insert' ),
+				title: OO.ui.deferMsg( 'visualeditor-toolbar-insert' ),
+				label: OO.ui.deferMsg( 'visualeditor-toolbar-insert' ),
+				invisibleLabel: true,
+				type: 'list',
+				icon: 'add',
+				include: '*'
+			},
+			{
+				name: 'flowMention',
+				include: [ 'flowMention' ]
+			},
+			{
 				name: 'editMode',
 				align: 'after',
 				type: 'list',
 				icon: 'edit',
 				title: mw.msg( 'visualeditor-mweditmode-tooltip' ),
 				include: [ 'editModeVisual', 'editModeSource' ]
-			});
+			}
+		];
+	} else {
+		// [If desktop, display all VisualEditor Tools + User mention + editMode.
+		// Notice that if the editor is not large enough, tools overflow. --TJ]
+		mw.flow.ve.Target.static.toolbarGroups = ve.init.mw.Target.static.toolbarGroups;
+		mw.flow.ve.Target.static.toolbarGroups.unshift({name: 'flowMention', include: ['flowMention']});
+		mw.flow.ve.Target.static.toolbarGroups.push({
+			name: 'editMode',
+			align: 'after',
+			type: 'list',
+			icon: 'edit',
+			title: mw.msg( 'visualeditor-mweditmode-tooltip' ),
+			include: [ 'editModeVisual', 'editModeSource' ]
+		});
+	}
 
 	// Allow pasting links
 	mw.flow.ve.Target.static.importRules = ve.copy( mw.flow.ve.Target.static.importRules );
