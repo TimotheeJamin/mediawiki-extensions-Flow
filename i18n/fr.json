@@ -136,6 +136,7 @@
 	"flow-reply-topic-title-placeholder": "Répondre à « $1 »",
 	"flow-reply-link": "{{GENDER:$1|Répondre}}",
 	"flow-reply-link-anonymously": "Répondre de manière anonyme",
+	"flow-quote-link": "{{GENDER:$1|Répondre en citant}}",
 	"flow-thank-link": "{{GENDER:$1|{{GENDER:$2|Remercier}}}}",
 	"flow-thank-link-title": "{{GENDER:$1|{{GENDER:$2|Remercier}}}} publiquement l’auteur",
 	"flow-history-action-suppress-post": "masquer",

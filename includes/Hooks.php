@@ -815,12 +815,13 @@ class Hooks {
 	 * @param array &$vars
 	 */
 	public static function onResourceLoaderGetConfigVars( &$vars ) {
-		global $wgFlowEditorList, $wgFlowAjaxTimeout;
+		global $wgFlowEditorList, $wgFlowAjaxTimeout, $wgFlowQuoteReply;
 
 		$vars['wgFlowEditorList'] = $wgFlowEditorList;
 		$vars['wgFlowMaxTopicLength'] = Model\PostRevision::MAX_TOPIC_LENGTH;
 		$vars['wgFlowMentionTemplate'] = wfMessage( 'flow-ve-mention-template-title' )->inContentLanguage()->plain();
 		$vars['wgFlowAjaxTimeout'] = $wgFlowAjaxTimeout;
+		$vars['wgFlowQuoteReply'] = $wgFlowQuoteReply;
 	}
 
 	/**

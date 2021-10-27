@@ -585,7 +585,8 @@
 				"flow-error-http",
 				"mw-ui-unsubmitted-confirm",
 				"flow-reply-link",
-				"flow-reply-link-anonymously"
+				"flow-reply-link-anonymously",
+				"flow-quote-link"
 			],
 			"targets": [
 				"desktop",
