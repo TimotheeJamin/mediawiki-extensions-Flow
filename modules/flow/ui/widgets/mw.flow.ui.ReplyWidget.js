@@ -216,7 +216,58 @@
 	/**
 	 * Force activation of the editor
 	 */
-	mw.flow.ui.ReplyWidget.prototype.activateEditor = function () {
+	mw.flow.ui.ReplyWidget.prototype.activateEditor = function (topicID, postID) {
+		// [Function inserting quote of a post -- TJ]
+		var insertQuote = function( thiseditor ) {
+			const params = {
+				action: 'flow',
+				submodule: 'view-post',
+				page: 'Topic:' + topicID,
+				vppostId : postID,
+				vpformat: 'wikitext'
+			};
+			const api = new mw.Api();
+			
+			api.get(params).done( function(data) {
+				var surfaceModel = thiseditor.target.getSurface().getModel();
+				revisions = data.flow['view-post'].result.topic.revisions;
+				post = revisions[Object.keys(revisions)[0]];
+				string = '{{QuotePost|author=' + post.author.name + '|topicID=' + topicID + '|postID=' + postID + '\n}}' 
+				+ '<div class="quote-post">\n' + post.content.content + '</div>\n\n';
+				if (thiseditor.target.getSurface().getMode() === 'source' ) {
+					surfaceModel.getFragment().collapseToEnd().insertContent(string).collapseToEnd();
+				} else {
+					// [Inspired from function runWikitextStringHandlerTest in VisualEditor --TJ]
+					mimeType = 'text/plain';
+					var handler;
+					item = ve.ui.DataTransferItem.static.newFromString( string, mimeType ),
+					doc = surfaceModel.getDocument(),
+					mockSurface = thiseditor.target.getSurface(),
+					// Invoke the handler
+					handler = ve.ui.dataTransferHandlerFactory.create( 'wikitextString', mockSurface, item );
+					handler.getInsertableData().done( function ( docOrData ) {
+						var actualData, store;
+						if ( docOrData instanceof ve.dm.Document ) {
+							actualData = docOrData.getData();
+							store = docOrData.getStore();
+						} else {
+							actualData = docOrData;
+							store = new ve.dm.HashValueStore();
+						}
+						range = surfaceModel.getSelection().getRange();
+						surfaceModel.change( ve.dm.TransactionBuilder.static.newFromRemoval(doc, range, true) );
+						surfaceModel.change( ve.dm.TransactionBuilder.static.newFromDocumentInsertion(doc, range.start, docOrData) );
+					});
+				}
+			});
+		}
+		if ( this.isExpanded() ) {
+			if ( topicID ) {
+				thiseditor = this.editor;
+				insertQuote(thiseditor);
+			}
+			return false;
+		}
 		if ( this.triggerInput ) {
 			this.triggerInput.setValue( '' );
 			this.triggerInput.toggle( false );
@@ -226,7 +277,13 @@
 		this.canNotEdit.toggle( true );
 		this.initializeEditor();
 		this.editor.toggle( true );
-		this.editor.activate();
+		thiseditor=this.editor;
+		this.editor.activate()
+			.then( function () {
+				if ( topicID ) {
+					insertQuote(thiseditor);
+				}
+			});
 		this.expanded = true;
 	};
 

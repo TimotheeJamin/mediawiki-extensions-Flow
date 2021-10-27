@@ -365,6 +365,18 @@
 			flowBoard.emitWithReturn( 'showError', $target, errorMsg );
 		} ).always( function () {
 			$targetElement.removeClass( 'flow-api-inprogress' );
+			// [Add "Quote and reply" links next to "Reply" links if activated -- TJ]
+			if ( mw.config.get( 'wgFlowQuoteReply' ) ) {
+				$elems = $( "a.flow-reply-link" );
+				$elems.each(function(){
+					$( this )
+						.clone( true )
+						.removeClass( 'flow-reply-link' )
+						.addClass( 'flow-quote-link' )
+						.html( mw.message('flow-quote-link').parse() )
+						.insertAfter( $( this ) );
+				});
+			}
 		} );
 	}
 

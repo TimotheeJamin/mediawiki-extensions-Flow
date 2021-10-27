@@ -693,9 +693,20 @@
 	 */
 	mw.flow.Initializer.prototype.setupReplyLinkActions = function () {
 		var self = this;
-
+		// [Add "Quote and reply" links next to "Reply" links if activated -- TJ]
+		if ( mw.config.get( 'wgFlowQuoteReply' ) ) {
+			$elems = $( "a.flow-reply-link" );
+			$elems.each(function(){
+				$( this )
+					.clone( true )
+					.removeClass( 'flow-reply-link' )
+					.addClass( 'flow-quote-link' )
+					.html( mw.message('flow-quote-link').parse() )
+					.insertAfter( $( this ) );
+			  });
+		}
 		// Replace the handler used for reply links.
-		this.$component.on( 'click', 'a.flow-reply-link', function () {
+		this.$component.on( 'click', 'a.flow-reply-link, a.flow-quote-link', function () {
 			// Store the needed details so we can get rid of the URL in JS mode
 			var replyWidget,
 				existingWidget,
@@ -714,7 +725,14 @@
 			if ( $existingWidget.length > 0 ) {
 				// Focus the existing reply widget
 				existingWidget = $existingWidget.data( 'self' );
-				existingWidget.activateEditor();
+				// [If quote link, insert topic and post IDs -- TJ]
+				if ( $( this ).hasClass('flow-quote-link') ) {
+					topicID = $topic.data( 'flowId' );
+					postID = $( this ).closest( '.flow-post' ).data( 'flowId' );
+					existingWidget.activateEditor(topicID, postID);
+				} else {
+					existingWidget.activateEditor();
+				}
 				existingWidget.focus();
 				return false;
 			}
@@ -731,7 +749,14 @@
 
 			// Add reply form below the post being replied to (WRT max depth)
 			$targetContainer.append( replyWidget.$element );
-			replyWidget.activateEditor();
+			// [If quote link, insert topic and post IDs -- TJ]
+			if ( $( this ).hasClass('flow-quote-link') ) {
+				topicID = $topic.data( 'flowId' );
+				postID = $( this ).closest( '.flow-post' ).data( 'flowId' );
+				replyWidget.activateEditor(topicID, postID);
+			} else {
+				replyWidget.activateEditor();
+			}
 
 			replyWidget
 				.on( 'saveContent', function ( workflow ) {

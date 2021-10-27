@@ -67,6 +67,24 @@ class FlowCreateTemplates extends LoggedUpdateMaintenance {
 			'flow-importer-wt-converted-archive-template' => static function ( Title $title ) {
 				return wfMessage( 'flow-importer-wt-converted-archive-template-content' )->inContentLanguage()->plain();
 			},
+			// Template:QuotePost, used to render post quote in Flow's Visual Editor
+			'flow-ve-quotepost-template-title' => function ( Title $title ) {
+				// get "User:" namespace prefix in wiki language
+				$namespaces = MediaWikiServices::getInstance()->getContentLanguage()
+					->getFormattedNamespaces();
+				return '<div class="quote-post-intro"><span class="quoted-user">{{' . wfMessage( 'flow-ve-mention-template-title' )->inContentLanguage()->plain() . "\n" 
+						. '|{{{author}}}}}</span><span class="quoted-post-link">[[' . $namespaces[NS_TOPIC] . ':{{{topicID}}}#flow-post-{{{postID}}}' . "\n"
+						. '|{{#switch:{{PAGELANGUAGE}}' ."\n"
+						. '|en = wrote |fr = a écrit }}]]{{#switch:{{PAGELANGUAGE}}|fr = {{spaces}} }}:</span></div>' . "\n"
+						. '<noinclude>' . "\n"
+						. '<templatedata>' . "\n"
+						. '{' . "\n"
+						. '	"params": {},' . "\n"
+						. '	"format": "{{_| _ = _}}\n"' . "\n"
+						. '}' . "\n"
+						. '</templatedata>' . "\n"
+						. '</noinclude>';
+			},
 		];
 	}
 
