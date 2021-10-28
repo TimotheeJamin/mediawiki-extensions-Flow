@@ -64,7 +64,7 @@ class FlowCreateTemplates extends LoggedUpdateMaintenance {
 				return '<div class="quote-post-intro"><span class="quoted-user">{{' . wfMessage( 'flow-ve-mention-template-title' )->inContentLanguage()->plain() . "\n" 
 						. '|{{{author}}}}}</span><span class="quoted-post-link">[[' . $namespaces[NS_TOPIC] . ':{{{topicID}}}#flow-post-{{{postID}}}' . "\n"
 						. '|{{#switch:{{PAGELANGUAGE}}' ."\n"
-						. '|en = wrote |fr = a écrit }}]]{{#switch:{{PAGELANGUAGE}}|fr = {{spaces}} }}:</span></div>' . "\n"
+						. '|fr = a écrit |#default = wrote }}]]{{#switch:{{PAGELANGUAGE}}|fr = {{spaces}} }}:</span></div>' . "\n"
 						. '<noinclude>' . "\n"
 						. '<templatedata>' . "\n"
 						. '{' . "\n"
