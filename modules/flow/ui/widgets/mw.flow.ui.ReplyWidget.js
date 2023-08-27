@@ -218,6 +218,7 @@
 	 */
 	mw.flow.ui.ReplyWidget.prototype.activateEditor = function (topicID, postID) {
 		// [Function inserting quote of a post -- TJ]
+		var widget = this;
 		var insertQuote = function( thiseditor ) {
 			const params = {
 				action: 'flow',
@@ -227,12 +228,12 @@
 				vpformat: 'wikitext'
 			};
 			const api = new mw.Api();
-			
+
 			api.get(params).done( function(data) {
 				var surfaceModel = thiseditor.target.getSurface().getModel();
 				revisions = data.flow['view-post'].result.topic.revisions;
 				post = revisions[Object.keys(revisions)[0]];
-				string = '{{QuotePost|author=' + post.author.name + '|topicID=' + topicID + '|postID=' + postID + '\n}}' 
+				string = '{{QuotePost|author=' + post.author.name + '|topicID=' + topicID + '|postID=' + postID + '\n}}'
 				+ '<div class="quote-post">\n' + post.content.content + '</div>\n\n';
 				if (thiseditor.target.getSurface().getMode() === 'source' ) {
 					surfaceModel.getFragment().collapseToEnd().insertContent(string).collapseToEnd();
@@ -254,9 +255,11 @@
 							actualData = docOrData;
 							store = new ve.dm.HashValueStore();
 						}
-						range = surfaceModel.getSelection().getRange();
-						surfaceModel.change( ve.dm.TransactionBuilder.static.newFromRemoval(doc, range, true) );
-						surfaceModel.change( ve.dm.TransactionBuilder.static.newFromDocumentInsertion(doc, range.start, docOrData) );
+						range = surfaceModel.getFragment().getSelection().getRanges()[0] || widget.savedSelectionRange;
+						const range_start = range ? range.start : (doc.getDocumentRange().end > 2 ? doc.getDocumentRange().end : 1);
+						if (range)
+							surfaceModel.change( ve.dm.TransactionBuilder.static.newFromRemoval(doc, range, true) );
+						surfaceModel.change( ve.dm.TransactionBuilder.static.newFromDocumentInsertion(doc, range_start, docOrData) );
 					});
 				}
 			});

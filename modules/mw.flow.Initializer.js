@@ -705,6 +705,26 @@
 					.insertAfter( $( this ) );
 			  });
 		}
+
+		// [Reply widget editor will be blurred and given nullSelectionOnBlur = true,
+		// we need to save selection ranges.
+		// Notice that setting nullSelectionOnBlur = false permanently (i.e. in config in
+		// mw.flow.ve.Target.prototype.addSurface) causes other issues: editor is not focused
+		// when clicking on "Insert paragraph" -- TJ]
+		this.$component.on( 'mousedown', 'a.flow-quote-link', function (event) {
+            let existingWidget;
+            const href = $( this ).attr( 'href' ),
+            uri = new mw.Uri( href ),
+            replyTo = uri.query.topic_postId;
+            const $targetContainer = $( '#flow-post-' + replyTo + ' > .flow-replies, #flow-topic-' + replyTo );
+            const $existingWidget = $targetContainer.children( '.flow-ui-replyWidget' );
+            if ( $existingWidget.length > 0 ) {
+                // Focus the existing reply widget
+                existingWidget = $existingWidget.data( 'self' );
+				existingWidget.savedSelectionRange = existingWidget.editor?.target.getSurface()?.getModel().getFragment().getSelection().getRanges()[0];
+            }
+        });
+
 		// Replace the handler used for reply links.
 		this.$component.on( 'click', 'a.flow-reply-link, a.flow-quote-link', function () {
 			// Store the needed details so we can get rid of the URL in JS mode
